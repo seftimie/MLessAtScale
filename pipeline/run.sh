@@ -14,9 +14,8 @@ SA_JSON=""
 # Activate service account inside container
 gcloud auth activate-service-account ${SA_EMAIL} --key-file={SA_JSON}
 
-# (todo) CREATE & TRAING BQ MODEL: create and traing your first ML model in BigQuery.
-
-# (todo) EVALUATE MODEL: evaluate how well the model performs using 
+# (todo) BQML: create and train the model 
+# eg: https://www.cloudskillsboost.google/focuses/1794?parent=catalog
 
 # EXPORT BQ MODEL TO STORAGE
 bq --location=${BQ_LOCATION} extract --destination_format ${BQ_FORMAT}  --model ${GCP_PROJECT_ID}:${BQ_DATASET_ID}.${BQ_MODEL} ${GCP_BUCKET}
