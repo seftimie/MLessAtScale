@@ -1,0 +1,5 @@
+- deploy this front into cloud run;
+- UI (form with nextjs and tailwindcss);
+- on submit, generate yaml file for cloud build;
+- run cloud build;
+- redirect user to cloud build url process;
