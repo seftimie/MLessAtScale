@@ -1,6 +1,13 @@
-import type { GetServerSideProps, NextPage, NextPageContext } from "next";
+import type { NextPageContext } from "next";
 import Head from "next/head";
-import { ChangeEvent, useEffect, useState } from "react";
+import * as cookies from "cookie";
+import { useForm } from "react-hook-form";
+import { readFileSync } from "fs";
+import { Dialog, Transition } from "@headlessui/react";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { ClipboardIcon } from "@heroicons/react/solid";
+
+import data from "../lib/data.json";
 import FormBox from "../components/FormBox";
 
 import { urlGoogle } from "../lib/google-auth";
@@ -8,29 +15,106 @@ import { urlGoogle } from "../lib/google-auth";
 import bq from "../public/icons/bq.svg";
 import gcp from "../public/icons/gcp.svg";
 import gcr from "../public/icons/cloud_run.svg";
-import iam from "../public/icons/iam.svg";
 
-import InputWithLabel from "../components/InputWithLabel";
-
-import * as cookies from "cookie";
+import { serverPath, substituteBindingInString } from "../lib/utils";
+import { Fragment, useState } from "react";
 
 interface Props {
   google_url: string;
   google: Record<string, any>;
+  yaml: string;
 }
 
-const Home = ({ google_url, google }: Props) => {
-  const [formData, setFormData] = useState({
-    bq_location: "europe-west1",
-    run_location: "europe-west1",
-  });
-
-  const changeState = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+const Home = ({ google_url, google, yaml }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [yamlData, setYamlData] = useState(yaml);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data: any) => {
+    setYamlData(substituteBindingInString(yaml, data));
+    setIsOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 relative">
+    <div className="relative min-h-screen overflow-hidden bg-slate-100">
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          onClose={() => setIsOpen(false)}
+        >
+          <div className="min-h-screen px-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0" />
+            </Transition.Child>
+
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <div className="inline-block w-full max-w-lg max-h-screen p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-900"
+                >
+                  YAML Viewer
+                </Dialog.Title>
+                <div className="relative mt-2">
+                  <div className="absolute top-2 right-2">
+                    <button
+                      type="button"
+                      className="rounded-md shadow-md bg-slate-100/90 shadow-slate-200/50 hover:bg-slate-300"
+                      onClick={() => navigator.clipboard.writeText(yamlData)}
+                    >
+                      <ClipboardIcon className="w-5 h-5 m-2" />
+                    </button>
+                  </div>
+                  <SyntaxHighlighter
+                    className="overflow-scroll max-h-96"
+                    language="yaml"
+                  >
+                    {yamlData}
+                  </SyntaxHighlighter>
+                </div>
+
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-indigo-900 bg-indigo-100 border border-transparent rounded-md hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Got it, thanks!
+                  </button>
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
       <Head>
         <link
           rel="icon"
@@ -41,87 +125,211 @@ const Home = ({ google_url, google }: Props) => {
       {/* <div className='absolute top-0 left-0'> */}
       {/* <Image src={pipeline} width={480} height={750} alt='' /> */}
       {/* </div> */}
-      <div className="fixed top-0 flex w-full justify-end">
+      {/* <div className="fixed top-0 flex justify-end w-full">
         <div className="mt-3 mr-3">
           {Object.keys(google).length > 0 ? (
             <button
-              className="bg-rose-500 shadow-lg shadow-rose-200 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-md"
+              className="px-4 py-2 font-bold text-white rounded-md shadow-lg bg-rose-500 shadow-rose-200 hover:bg-rose-700"
               type="button"
             >
               {google.email}
             </button>
           ) : (
             <a
-              className="bg-rose-500 shadow-lg shadow-rose-200 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-md"
+              className="px-4 py-2 font-bold text-white rounded-md shadow-lg bg-rose-500 shadow-rose-200 hover:bg-rose-700"
               href={google_url}
             >
               Login with Google
             </a>
           )}
         </div>
-      </div>
-      <main className="py-8 m-auto max-w-screen-lg space-y-12">
-        <FormBox icon={gcp}>
-          <div className="flex justify-center w-full">
-            <div className="flex space-x-8 justify-around">
-              <InputWithLabel
-                id="project_id"
-                label="Project ID"
-                placeholder="my-cool-project"
-              />
-              <InputWithLabel
-                id="bucket"
-                label="Bucket"
-                placeholder="Bucket name"
-              />
+      </div> */}
+      <main className="max-w-screen-lg py-8 m-auto">
+        <form className="space-y-12" onSubmit={handleSubmit(onSubmit)}>
+          <FormBox icon={gcp}>
+            <div className="flex justify-center w-full">
+              <div className="flex justify-around space-x-8">
+                <div>
+                  <label
+                    htmlFor="_GCP_PROJECT_ID"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    Project ID
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="_GCP_PROJECT_ID"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      {...register("_GCP_PROJECT_ID", { required: true })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="_GCP_BUCKET"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    Bucket
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="_GCP_BUCKET"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      {...register("_GCP_BUCKET", { required: true })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="_DOCKERFILE_ML"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    Dockerfile
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="_DOCKERFILE_ML"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      {...register("_DOCKERFILE_ML", { required: true })}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </FormBox>
-        <FormBox icon={bq}>
-          <div className="flex justify-center w-full">
-            <div className="grid grid-cols-3 gap-8 justify-around">
-              <InputWithLabel id="bq_dataset" label="BQ Dataset" />
-              <InputWithLabel id="bq_model" label="BQ Model" />
-              <InputWithLabel
-                id="bq_location"
-                label="BQ Location"
-                value={formData.bq_location}
-                onChange={changeState}
-              />
-              <InputWithLabel id="bq_format" label="BQ Format" />
-              <InputWithLabel
-                classNames="col-span-2"
-                id="bq_query"
-                label="BQ Query URL"
-                placeholder="https://storage.googleapis.com/easyserverless-assets/model.sql"
-              />
+          </FormBox>
+          <FormBox icon={bq}>
+            <div className="flex justify-center w-full">
+              <div className="grid justify-around grid-cols-3 gap-8">
+                <div>
+                  <label
+                    htmlFor="_BQ_LOCATION"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    BQ Location
+                  </label>
+                  <div className="mt-1">
+                    <select
+                      id="_BQ_LOCATION"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      {...register("_BQ_LOCATION", { required: true })}
+                    >
+                      {data.big_query_locations.map((location) => (
+                        <option key={location} value={location}>
+                          {location}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="_BQ_DATASET_ID"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    BQ Dataset
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="_BQ_DATASET_ID"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      {...register("_BQ_DATASET_ID", { required: true })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="_BQ_MODEL"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    BQ Model
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="_BQ_MODEL"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      {...register("_BQ_MODEL", { required: true })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="_BQ_FORMAT"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    BQ Format
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="_BQ_FORMAT"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      defaultValue="ML_TF_SAVED_MODEL"
+                      {...register("_BQ_FORMAT", { required: true })}
+                    />
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <label
+                    htmlFor="_BQ_QUERY"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    BQ Query
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="_BQ_QUERY"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      placeholder="https://storage.googleapis.com/easyserverless-assets/model.sql"
+                      {...register("_BQ_QUERY", { required: true })}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </FormBox>
-        <FormBox icon={gcr}>
-          <div className="flex justify-center w-full">
-            <div className="flex space-x-8 justify-around">
-              <InputWithLabel
-                id="run_location"
-                label="Cloud Run Location"
-                placeholder="europe-west1"
-                value={formData.run_location}
-                onChange={changeState}
-              />
-              <InputWithLabel
-                id="run_name"
-                label="Cloud Run Name"
-                placeholder="bqmodel-run"
-              />
-              <InputWithLabel
-                id="run_docker"
-                label="Dockerfile URL"
-                placeholder="https://storage.googleapis.com/easyserverless-assets/Dockerfile_ML"
-              />
+          </FormBox>
+          <FormBox icon={gcr}>
+            <div className="flex justify-center w-full">
+              <div className="flex justify-around space-x-8">
+                <div>
+                  <label
+                    htmlFor="_RUN_LOCATION"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    Run Location
+                  </label>
+                  <div className="mt-1">
+                    <select
+                      id="_RUN_LOCATION"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      {...register("_RUN_LOCATION", { required: true })}
+                    >
+                      {data.cloud_run_locations.map((location) => (
+                        <option key={location} value={location}>
+                          {location}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="_RUN_NAME"
+                    className="block text-sm font-medium text-slate-500"
+                  >
+                    Run Name
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="_RUN_NAME"
+                      className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
+                      defaultValue="MLessAtScale"
+                      {...register("_RUN_NAME", { required: true })}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </FormBox>
-        {/* <FormBox icon={iam}>
+          </FormBox>
+          {/* <FormBox icon={iam}>
           <div className='flex space-x-8'>
             <InputWithLabel id="sa_email" label="Service Account Email" placeholder="service.account@gcloud.com" />
             <div>
@@ -133,23 +341,24 @@ const Home = ({ google_url, google }: Props) => {
                   type="sa_json"
                   name="sa_json"
                   id="sa_json"
-                  className="shadow-md shadow-slate-300 bg-slate-50 focus:ring-slate-500 focus:border-slate-500 block w-full sm:text-sm border-slate-300 rounded-md outline-none px-3 py-2"
+                  className="block w-full px-3 py-2 rounded-md shadow-md outline-none shadow-slate-300 bg-slate-50 focus:ring-slate-500 focus:border-slate-500 sm:text-sm border-slate-300"
                   placeholder="{...}"
                 />
               </div>
             </div>
           </div>
         </FormBox> */}
-        <div className="flex justify-center">
-          <div>
-            <button
-              className="bg-indigo-500 shadow-lg shadow-indigo-200 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md"
-              type="button"
-            >
-              Save
-            </button>
+          <div className="flex justify-center">
+            <div>
+              <button
+                className="px-4 py-2 font-bold text-white bg-indigo-500 rounded-md shadow-lg shadow-indigo-200 hover:bg-indigo-700"
+                type="submit"
+              >
+                Generate YAML
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
       </main>
     </div>
   );
@@ -158,11 +367,13 @@ const Home = ({ google_url, google }: Props) => {
 export async function getServerSideProps(context: NextPageContext) {
   const google_url = urlGoogle();
   const parsed_cookies = cookies.parse(context?.req?.headers?.cookie ?? "");
+  const yaml_stub = readFileSync(serverPath("/public/build.stub.yaml"), "utf8");
 
   return {
     props: {
       google_url,
       google: parsed_cookies.google ? JSON.parse(parsed_cookies.google) : {},
+      yaml: yaml_stub,
     },
   };
 }
