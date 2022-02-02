@@ -11,7 +11,7 @@ steps:
       wget -O Dockerfile ${_DOCKERFILE_ML} &&
       wget -O model.sql ${_BQ_QUERY}
 
-- id: "Create and traing the BQML model"
+- id: "Create and train a BQML model"
   name: 'gcr.io/cloud-builders/gcloud'
   entrypoint: /bin/bash
   args:
