@@ -1,0 +1,42 @@
+# gcloud builds submit --no-source --substitutions _GCP_PROJECT_ID="secret-lambda-276714",_GCP_BUCKET="gs://easyserverless-assets/models/model1",_BQ_QUERY="https://storage.googleapis.com/easyserverless-assets/model.sql",_BQ_DATASET_ID="easyserverless",_BQ_MODEL="model1",_BQ_LOCATION="US",_BQ_FORMAT="ML_TF_SAVED_MODEL",_RUN_LOCATION="europe-west1",_RUN_NAME="bqmodel-run",_DOCKERFILE_ML="https://storage.googleapis.com/easyserverless-assets/Dockerfile_ML"
+# cloud build user: gstorage, cloud run, bigquery access
+steps:
+  - id: "Download assets"
+    name: "gcr.io/cloud-builders/wget"
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+        cd /workspace/ &&
+        wget -O Dockerfile ${_DOCKERFILE_ML} &&
+        wget -O model.sql ${_BQ_QUERY}
+
+  - id: "Create and traing the BQML model"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+        cd /workspace/ &&
+        cat model.sql | bq query --use_legacy_sql=false --project_id=${_GCP_PROJECT_ID}
+
+  - id: "Export BQML to Google Storage"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+        bq --location=${_BQ_LOCATION} extract --destination_format ${_BQ_FORMAT}  --model ${_GCP_PROJECT_ID}:${_BQ_DATASET_ID}.${_BQ_MODEL} ${_GCP_BUCKET}
+
+  - id: "Deploy BQML into Cloud Run"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+        cd /workspace/ &&
+        mkdir -p /workspace/models/tf_models/model/00000001/ &&
+        gsutil cp -r ${_GCP_BUCKET}/* /workspace/models/tf_models/model/00000001/ &&
+        gcloud builds submit --project=${_GCP_PROJECT_ID} --tag gcr.io/${_GCP_PROJECT_ID}/${_RUN_NAME} &&
+        gcloud run deploy ${_RUN_NAME} --project=${_GCP_PROJECT_ID} --image gcr.io/${_GCP_PROJECT_ID}/${_RUN_NAME} --platform managed --region ${_RUN_LOCATION} --allow-unauthenticated &&
+        gcloud run services add-iam-policy-binding ${_RUN_NAME} --project=${_GCP_PROJECT_ID} --region ${_RUN_LOCATION} --member="allUsers" --role="roles/run.invoker"

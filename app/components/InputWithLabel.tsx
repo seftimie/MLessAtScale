@@ -1,13 +1,26 @@
+import type { ChangeEvent } from "react";
+
 interface Props {
-  id: string
-  label: string
-  type?: string
-  placeholder?: string
+  id: string;
+  label: string;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
+  placeholder?: string;
+  classNames?: string;
 }
 
-const InputWithLabel = ({ id, label, type = 'text', placeholder = '' }: Props) => {
+const InputWithLabel = ({
+  id,
+  label,
+  value = "",
+  onChange,
+  type = "text",
+  placeholder = "",
+  classNames = "",
+}: Props) => {
   return (
-    <div>
+    <div className={classNames}>
       <label htmlFor={id} className="block text-sm font-medium text-slate-500">
         {label}
       </label>
@@ -18,10 +31,12 @@ const InputWithLabel = ({ id, label, type = 'text', placeholder = '' }: Props) =
           id={id}
           className="shadow-inner shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 block w-full sm:text-sm border-slate-100/75 rounded-md outline-none px-3 py-2 placeholder-slate-400"
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default InputWithLabel
+export default InputWithLabel;
