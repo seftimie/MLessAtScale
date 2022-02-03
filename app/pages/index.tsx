@@ -1,6 +1,5 @@
 import type { NextPageContext } from "next";
 import Head from "next/head";
-import * as cookies from "cookie";
 import { useForm } from "react-hook-form";
 import { readFileSync } from "fs";
 import { Dialog, Transition } from "@headlessui/react";
@@ -10,8 +9,6 @@ import { ClipboardIcon } from "@heroicons/react/solid";
 import data from "../lib/data.json";
 import FormBox from "../components/FormBox";
 
-import { urlGoogle } from "../lib/google-auth";
-
 import bq from "../public/icons/bq.svg";
 import gcp from "../public/icons/gcp.svg";
 import gcr from "../public/icons/cloud_run.svg";
@@ -20,20 +17,16 @@ import { serverPath, substituteBindingInString } from "../lib/utils";
 import { Fragment, useState } from "react";
 
 interface Props {
-  google_url: string;
-  google: Record<string, any>;
+  // google_url: string;
+  // google: Record<string, any>;
   yaml: string;
 }
 
-const Home = ({ google_url, google, yaml }: Props) => {
+const Home = ({ yaml }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [yamlData, setYamlData] = useState(yaml);
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit } = useForm();
+
   const onSubmit = (data: any) => {
     setYamlData(substituteBindingInString(yaml, data));
     setIsOpen(true);
@@ -365,14 +358,14 @@ const Home = ({ google_url, google, yaml }: Props) => {
 };
 
 export async function getServerSideProps(context: NextPageContext) {
-  const google_url = urlGoogle();
-  const parsed_cookies = cookies.parse(context?.req?.headers?.cookie ?? "");
+  // const google_url = urlGoogle();
+  // const parsed_cookies = cookies.parse(context?.req?.headers?.cookie ?? "");
   const yaml_stub = readFileSync(serverPath("/public/build.stub.yaml"), "utf8");
 
   return {
     props: {
-      google_url,
-      google: parsed_cookies.google ? JSON.parse(parsed_cookies.google) : {},
+      // google_url,
+      // google: parsed_cookies.google ? JSON.parse(parsed_cookies.google) : {},
       yaml: yaml_stub,
     },
   };

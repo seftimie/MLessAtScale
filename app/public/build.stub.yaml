@@ -1,4 +1,4 @@
-# gcloud builds submit --no-source --substitutions _GCP_PROJECT_ID="secret-lambda-276714",_GCP_BUCKET="gs://easyserverless-assets/models/model1",_BQ_QUERY="https://storage.googleapis.com/easyserverless-assets/model.sql",_BQ_DATASET_ID="easyserverless",_BQ_MODEL="model1",_BQ_LOCATION="US",_BQ_FORMAT="ML_TF_SAVED_MODEL",_RUN_LOCATION="europe-west1",_RUN_NAME="bqmodel-run",_DOCKERFILE_ML="https://storage.googleapis.com/easyserverless-assets/Dockerfile_ML"
+# gcloud builds submit --no-source --substitutions _GCP_PROJECT_ID="${_GCP_PROJECT_ID}",_GCP_BUCKET="${_GCP_BUCKET}",_BQ_QUERY="${_BQ_QUERY}",_BQ_DATASET_ID="${_BQ_DATASET_ID}",_BQ_MODEL="${_BQ_MODEL}",_BQ_LOCATION="${_BQ_LOCATION}",_BQ_FORMAT="${_BQ_FORMAT}",_RUN_LOCATION="${_RUN_LOCATION}",_RUN_NAME="${_RUN_NAME}",_DOCKERFILE_ML="${_DOCKERFILE_ML}"
 # cloud build user: gstorage, cloud run, bigquery access
 steps:
   - id: "Download assets"
