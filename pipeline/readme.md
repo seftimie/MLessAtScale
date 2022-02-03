@@ -28,19 +28,19 @@ Deploy on GCP with Cloud Shell with this workflow/pipeline.
   ```
   #must change:
   GCP_PROJECT_ID="plated-howl-340116"
-  BQ_DATASET_ID="easyserverless"
   BQ_LOCATION="US"
   BQ_MODEL="model1"
   RUN_LOCATION="europe-west1"
   BQ_QUERY="https://storage.googleapis.com/easyserverless-assets/model.sql"
 
   #don't change:
+  BQ_DATASET_ID="easyserverless"
   DOCKERFILE_ML="https://storage.googleapis.com/easyserverless-assets/Dockerfile_ML"
   BQ_FORMAT="ML_TF_SAVED_MODEL"
   RUN_NAME="${BQ_MODEL}-run"
   GCP_BUCKET="gs://${GCP_PROJECT_ID}-assets/models/${BQ_MODEL}"
   ```
-  **note**: BQ_QUERY, it's a public file, with the sql query that will create and train a BQML model. Is inspired by [Predict Visitor Purchases with a Classification Model in BQML (Improve model performance with Feature Engineering)](https://www.qwiklabs.com/focuses/1794?parent=catalog)
+  **note**: BQ_QUERY, it's a public file, with the sql query that will create and train a BQML model. Is inspired by [Predict Visitor Purchases with a Classification Model in BQML (Improve model performance with Feature Engineering)](https://www.qwiklabs.com/focuses/1794?parent=catalog). If you change "BQ_DATASET_ID" value, then you should update the SQL Query from BQ_QUERY ;)
 
 - **Deploy MLess**: skip this part, if already have created this resources:
 	
