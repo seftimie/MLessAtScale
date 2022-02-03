@@ -55,6 +55,7 @@ Deploy on GCP with Cloud Shell and Next.JS web app:
   BQ Format: ML_TF_SAVED_MODEL
   BQ Query: https://storage.googleapis.com/easyserverless-assets/model.sql
   Run Location: europe-west1
+  Run Name: model1-run
   ```
   
   When ready hit "Generate YAML". Copy the code and on GCP "Cloud Shell" > "Open Editor" create new file with the
