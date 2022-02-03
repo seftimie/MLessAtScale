@@ -63,6 +63,14 @@ Deploy on GCP with Cloud Shell and Next.JS web app:
   ```
   gcloud builds submit --no-source
   ```
+  
+  - **Predict with MLess**: when done, check the deployment in Cloud Run (you should have two instances), copy the endpoint and make a predict with:
+  ```
+  # to find out the payload of your model, just hit this:
+  curl -d '{"instances":[{}]}' -X POST https://<cloud-run-url>.a.run.app/v1/models/model:predict
+  # demo predict:
+  curl -d '{"instances":[{"bounces":0,"channelGrouping":"Referral","country":"United States","deviceCategory":"desktop","latest_ecommerce_progress":6,"medium":"referral","pageviews":51,"source":"mall.googleplex.com","time_on_site":4245}]}' -X POST https://<cloud-run-url>.a.run.app/v1/models/model:predict
+  ```
 
   
 	
