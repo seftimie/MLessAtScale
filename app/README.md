@@ -27,7 +27,9 @@ Deploy on GCP with Cloud Shell and Next.JS web app:
   ```
   GCP_PROJECT_ID="<gcp_project_id>"
   RUN_LOCATION="europe-west1"
-  RUN_NAME="MLessAtScaleFront"
+  RUN_NAME="mless-front"
+  BQ_LOCATION=US
+  BQ_DATASET_ID=easyserverless
 
   #create gcp bucket - skip this part, if already have created;
   gsutil mb -p $GCP_PROJECT_ID -c STANDARD -l $RUN_LOCATION -b on "gs://${GCP_PROJECT_ID}-assets/" 
