@@ -18,4 +18,5 @@ yarn dev
 There is a Dockerfile included. 
 
 You also can run it on GCP Cloud Run
+
 [![Run on Google Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run/?git_repo=https://github.com/seftimie/MLessAtScale.git&dir=app)
