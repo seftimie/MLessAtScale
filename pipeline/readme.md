@@ -1,7 +1,7 @@
 # MLessAtScale
 Google Cloud Easy as Pie Serverless Hackathon
 
-Deploy on GCP, with Cloud Shell our serverless solution with this workflow/pipeline.
+Deploy on GCP with Cloud Shell with this workflow/pipeline.
 
 - **GCP Project Setup**: Open [GCP Console](https://console.cloud.google.com) , choose your project and activate this services: cloud build, cloud run, bigquery via "Cloud Shell":
   
