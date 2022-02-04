@@ -149,15 +149,13 @@ const Home = ({ yaml }: Props) => {
                       <button
                         type="button"
                         className="inline-flex justify-center px-4 py-2 text-sm font-medium text-green-600 bg-green-100 border border-transparent rounded-md hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-500"
-                        onClick={submitPipeline}
                       >
-                        Go to Pipeline!
+                        Deployed!
                       </button>
                     ) : (
                       <button
                         type="button"
                         className="inline-flex justify-center px-4 py-2 text-sm font-medium border border-transparent rounded-md text-fuchsia-600 bg-fuchsia-100 hover:bg-fuchsia-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-fuchsia-500"
-                        onClick={submitPipeline}
                       >
                         Error deploying!
                       </button>
