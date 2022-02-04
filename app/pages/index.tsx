@@ -26,27 +26,34 @@ const Home = ({ yaml }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [yamlData, setYamlData] = useState(yaml);
   const [projectId, setProjectId] = useState("");
+  const [deployState, setDeployState] = useState<{
+    success: boolean;
+    message: Record<string, any> | string;
+  } | null>(null);
   const { register, handleSubmit } = useForm();
 
   const callApi = (projectId: string) => {
-    return fetch("/api/build", {
+    fetch("/api/build", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ projectId, data: yamlData }),
-    });
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (Object.keys(res).includes("error")) {
+          console.log(res.error);
+          setDeployState({ success: false, message: res.error });
+        } else {
+          setDeployState({ success: true, message: res.build });
+        }
+      });
   };
 
-  const submitPipeline = () => {
+  const submitPipeline = async () => {
     if (projectId) {
-      callApi(projectId)
-        .then((response) => {
-          if (response.status === 200) {
-            setIsOpen(false);
-          }
-        })
-        .catch(console.error);
+      callApi(projectId);
     }
   };
 
@@ -130,13 +137,31 @@ const Home = ({ yaml }: Props) => {
                   </div>
 
                   <div>
-                    <button
-                      type="button"
-                      className="inline-flex justify-center px-4 py-2 text-sm font-medium border border-transparent rounded-md text-rose-900 bg-rose-100 hover:bg-rose-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-rose-500"
-                      onClick={submitPipeline}
-                    >
-                      Deploy!
-                    </button>
+                    {!deployState ? (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 text-sm font-medium border border-transparent rounded-md text-rose-900 bg-rose-100 hover:bg-rose-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-rose-500"
+                        onClick={submitPipeline}
+                      >
+                        Deploy
+                      </button>
+                    ) : deployState.success ? (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-green-600 bg-green-100 border border-transparent rounded-md hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-500"
+                        onClick={submitPipeline}
+                      >
+                        Go to Pipeline!
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 text-sm font-medium border border-transparent rounded-md text-fuchsia-600 bg-fuchsia-100 hover:bg-fuchsia-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-fuchsia-500"
+                        onClick={submitPipeline}
+                      >
+                        Error deploying!
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

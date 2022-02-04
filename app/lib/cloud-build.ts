@@ -2,11 +2,11 @@ import { CloudBuildClient } from "@google-cloud/cloudbuild";
 
 const cb = new CloudBuildClient();
 
-export const createBuild = (
+export const createBuild = async (
   projectId: string,
   steps: Array<Record<string, any>>
 ) => {
-  return cb.createBuild({
+  const [operation] = await cb.createBuild({
     projectId,
     build: {
       projectId,
@@ -14,4 +14,7 @@ export const createBuild = (
       steps,
     },
   });
+
+  const [response] = await operation.promise();
+  return response;
 };

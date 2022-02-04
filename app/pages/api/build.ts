@@ -6,7 +6,10 @@ export default async function build(req: NextApiRequest, res: NextApiResponse) {
   const { projectId, data } = req.body;
   const parsedBody = jsYaml.load(data) as any;
 
-  const build = await createBuild(projectId, parsedBody.steps);
-  console.log(build);
-  res.json({ work: true });
+  try {
+    const build = await createBuild(projectId, parsedBody.steps);
+    res.json({ build });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 }
