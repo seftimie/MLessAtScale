@@ -6,7 +6,7 @@ Google Cloud Easy as Pie Serverless Hackathon
 
 
 You can deploy and test **MLess as Scale** in two ways: 
-- with a pipeline via Google Cloud Shell: see [code](https://github.com/seftimie/MLessAtScale/tree/main/pipeline) or [video](https://)
-- with a Next.js web app in Cloud Run see [code](https://github.com/seftimie/MLessAtScale/tree/main/app) or [video](https://www.youtube.com/watch?v=-cTKhjzsL-o)
+- with a pipeline via Google Cloud Shell: see [code](https://github.com/seftimie/MLessAtScale/tree/main/pipeline) or [video](https://www.youtube.com/watch?v=-cTKhjzsL-o)
+- with a Next.js web app in Cloud Run see [code](https://github.com/seftimie/MLessAtScale/tree/main/app) or [video](https://www.youtube.com/watch?v=FFdn7fN84mU)
   
   
