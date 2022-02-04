@@ -45,28 +45,14 @@ Deploy on GCP with Cloud Shell and Next.JS web app:
   ```
   Open Cloud Run endpoint and fill the form with:
   ```
-  #change
-  Project ID: <gcp_project_id>
-  Bucket: gs://<gcp_project_id>-assets/model1
-  
-  #don't change:
-  Dockerfile: https://storage.googleapis.com/easyserverless-assets/Dockerfile_ML
+  Project ID: <project_cloud_id>
+  Bucket: gs://<project_cloud_id>-assets/model1
   BQ Location: US
-  BQ Dataset: easyserverless
-  BQ Model: model1
-  BQ Format: ML_TF_SAVED_MODEL
-  BQ Query: https://storage.googleapis.com/easyserverless-assets/model.sql
-  Run Location: europe-west1
-  Run Name: model1-run
   ```
   
-  When ready hit "Generate YAML". Copy the code and on GCP "Cloud Shell" > "Open Editor" create new file with the
-  name: "cloudbuild.yaml" and store paste the code from previous step. Then click on "Open Terminal" and go to location of "cloudbuild.yaml" then run:
-  ```
-  gcloud builds submit --no-source
-  ```
+  When ready hit "View YAML" and then "Deploy". You can see in Cloud Build that the deploying of our solutions is running. 
   
-  - **Predict with MLess**: when done, check the deployment in Cloud Run (you should have two instances), copy the endpoint and make a predict with:
+- **Predict with MLess**: when done, check the deployment in Cloud Run (you should have two instances), copy the endpoint and make a predict with:
   ```
   # to find out the payload of your model, just hit this:
   curl -d '{"instances":[{}]}' -X POST https://<cloud-run-url>.a.run.app/v1/models/model:predict
