@@ -245,7 +245,10 @@ const Home = ({ yaml }: Props) => {
                     <select
                       id="_BQ_LOCATION"
                       className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
-                      {...register("_BQ_LOCATION", { required: true })}
+                      {...register("_BQ_LOCATION", {
+                        required: true,
+                        value: "US",
+                      })}
                     >
                       {data.big_query_locations.map((location) => (
                         <option key={location} value={location}>
