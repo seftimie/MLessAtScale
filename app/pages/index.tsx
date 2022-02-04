@@ -25,11 +25,35 @@ interface Props {
 const Home = ({ yaml }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [yamlData, setYamlData] = useState(yaml);
+  const [projectId, setProjectId] = useState("");
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data: any) => {
+  const callApi = (projectId: string) => {
+    return fetch("/api/build", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ projectId, data: yamlData }),
+    });
+  };
+
+  const submitPipeline = () => {
+    if (projectId) {
+      callApi(projectId)
+        .then((response) => {
+          if (response.status === 200) {
+            setIsOpen(false);
+          }
+        })
+        .catch(console.error);
+    }
+  };
+
+  const submit = (data: any) => {
     setYamlData(substituteBindingInString(yaml, data));
     setIsOpen(true);
+    setProjectId(data._GCP_PROJECT_ID);
   };
 
   return (
@@ -94,14 +118,26 @@ const Home = ({ yaml }: Props) => {
                   </SyntaxHighlighter>
                 </div>
 
-                <div className="mt-4">
-                  <button
-                    type="button"
-                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-indigo-900 bg-indigo-100 border border-transparent rounded-md hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Got it, thanks!
-                  </button>
+                <div className="flex justify-center mt-4 space-x-10">
+                  <div>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center px-4 py-2 text-sm font-medium text-indigo-900 bg-indigo-100 border border-transparent rounded-md hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Got it, thanks!
+                    </button>
+                  </div>
+
+                  <div>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center px-4 py-2 text-sm font-medium border border-transparent rounded-md text-rose-900 bg-rose-100 hover:bg-rose-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-rose-500"
+                      onClick={submitPipeline}
+                    >
+                      Deploy!
+                    </button>
+                  </div>
                 </div>
               </div>
             </Transition.Child>
@@ -115,30 +151,8 @@ const Home = ({ yaml }: Props) => {
         />
         <title>MLess @ Scale</title>
       </Head>
-      {/* <div className='absolute top-0 left-0'> */}
-      {/* <Image src={pipeline} width={480} height={750} alt='' /> */}
-      {/* </div> */}
-      {/* <div className="fixed top-0 flex justify-end w-full">
-        <div className="mt-3 mr-3">
-          {Object.keys(google).length > 0 ? (
-            <button
-              className="px-4 py-2 font-bold text-white rounded-md shadow-lg bg-rose-500 shadow-rose-200 hover:bg-rose-700"
-              type="button"
-            >
-              {google.email}
-            </button>
-          ) : (
-            <a
-              className="px-4 py-2 font-bold text-white rounded-md shadow-lg bg-rose-500 shadow-rose-200 hover:bg-rose-700"
-              href={google_url}
-            >
-              Login with Google
-            </a>
-          )}
-        </div>
-      </div> */}
       <main className="max-w-screen-lg py-8 m-auto">
-        <form className="space-y-12" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-12" onSubmit={handleSubmit(submit)}>
           <FormBox icon={gcp}>
             <div className="flex justify-center w-full">
               <div className="flex justify-around space-x-8">
@@ -322,32 +336,14 @@ const Home = ({ yaml }: Props) => {
               </div>
             </div>
           </FormBox>
-          {/* <FormBox icon={iam}>
-          <div className='flex space-x-8'>
-            <InputWithLabel id="sa_email" label="Service Account Email" placeholder="service.account@gcloud.com" />
-            <div>
-              <label htmlFor="sa_json" className="block text-sm font-medium text-slate-700">
-                Service Account JSON
-              </label>
-              <div className="mt-1">
-                <input
-                  type="sa_json"
-                  name="sa_json"
-                  id="sa_json"
-                  className="block w-full px-3 py-2 rounded-md shadow-md outline-none shadow-slate-300 bg-slate-50 focus:ring-slate-500 focus:border-slate-500 sm:text-sm border-slate-300"
-                  placeholder="{...}"
-                />
-              </div>
-            </div>
-          </div>
-        </FormBox> */}
-          <div className="flex justify-center">
+
+          <div className="flex justify-center space-x-8">
             <div>
               <button
                 className="px-4 py-2 font-bold text-white bg-indigo-500 rounded-md shadow-lg shadow-indigo-200 hover:bg-indigo-700"
                 type="submit"
               >
-                Generate YAML
+                View YAML
               </button>
             </div>
           </div>
