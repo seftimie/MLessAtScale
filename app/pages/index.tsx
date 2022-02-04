@@ -197,7 +197,11 @@ const Home = ({ yaml }: Props) => {
                     <input
                       id="_DOCKERFILE_ML"
                       className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
-                      {...register("_DOCKERFILE_ML", { required: true })}
+                      {...register("_DOCKERFILE_ML", {
+                        required: true,
+                        value:
+                          "https://storage.googleapis.com/easyserverless-assets/Dockerfile_ML",
+                      })}
                     />
                   </div>
                 </div>
@@ -239,7 +243,10 @@ const Home = ({ yaml }: Props) => {
                     <input
                       id="_BQ_DATASET_ID"
                       className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
-                      {...register("_BQ_DATASET_ID", { required: true })}
+                      {...register("_BQ_DATASET_ID", {
+                        required: true,
+                        value: "easyserverless",
+                      })}
                     />
                   </div>
                 </div>
@@ -254,7 +261,10 @@ const Home = ({ yaml }: Props) => {
                     <input
                       id="_BQ_MODEL"
                       className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
-                      {...register("_BQ_MODEL", { required: true })}
+                      {...register("_BQ_MODEL", {
+                        required: true,
+                        value: "model1",
+                      })}
                     />
                   </div>
                 </div>
@@ -286,7 +296,11 @@ const Home = ({ yaml }: Props) => {
                       id="_BQ_QUERY"
                       className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
                       placeholder="https://storage.googleapis.com/easyserverless-assets/model.sql"
-                      {...register("_BQ_QUERY", { required: true })}
+                      {...register("_BQ_QUERY", {
+                        required: true,
+                        value:
+                          "https://storage.googleapis.com/easyserverless-assets/model.sql",
+                      })}
                     />
                   </div>
                 </div>
@@ -307,7 +321,10 @@ const Home = ({ yaml }: Props) => {
                     <select
                       id="_RUN_LOCATION"
                       className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
-                      {...register("_RUN_LOCATION", { required: true })}
+                      {...register("_RUN_LOCATION", {
+                        required: true,
+                        value: "europe-west1",
+                      })}
                     >
                       {data.cloud_run_locations.map((location) => (
                         <option key={location} value={location}>
@@ -329,7 +346,10 @@ const Home = ({ yaml }: Props) => {
                       id="_RUN_NAME"
                       className="block w-full px-3 py-2 rounded-md shadow-inner outline-none shadow-slate-100 bg-slate-50 focus:ring-0 focus:ring-slate-200/70 focus:border-slate-200/70 sm:text-sm border-slate-100/75 placeholder-slate-400 text-slate-600"
                       defaultValue="MLessAtScale"
-                      {...register("_RUN_NAME", { required: true })}
+                      {...register("_RUN_NAME", {
+                        required: true,
+                        value: "model1-run",
+                      })}
                     />
                   </div>
                 </div>
