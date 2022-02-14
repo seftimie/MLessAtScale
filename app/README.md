@@ -6,7 +6,7 @@ Deploy on GCP with Cloud Shell and Next.JS web app:
 [![MLess at Scale Video](https://raw.githubusercontent.com/seftimie/MLessAtScale/09a42e6655c05c4cb0801f1d628e55bb32db9eb8/assets/video.png)](https://www.youtube.com/watch?v=FFdn7fN84mU)
 
 
-- **GCP Project Setup**: Open [GCP Console](https://console.cloud.google.com) , choose your project and activate this services: cloud build, cloud run, bigquery via "Cloud Shell":
+- **Config GCP Project**: Open [GCP Console](https://console.cloud.google.com) , choose your project and activate this services: cloud build, cloud run, bigquery via "Cloud Shell":
   
   ```
   #you will need to enable this services: 
