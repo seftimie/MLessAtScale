@@ -1,6 +1,14 @@
 # MLessAtScale
 Google Cloud Easy as Pie Serverless Hackathon
 
+**Team**:
+- [Miguel Colomer](https://www.linkedin.com/in/miguel-colomer-ab552b107/)
+- [Christian Stoyanov](https://www.linkedin.com/in/christian-stoyanov/)
+- [Silviu Daniel Eftimie](https://www.linkedin.com/in/eftimiesilviudaniel)
+
+**Slides**:
+[Presentation](https://docs.google.com/presentation/d/19fjJ719z71zM1UhFDiRstNCYDi4yBeIpeCd8Y_Rkebc/edit?usp=drivesdk)
+
 
 **MLess as Scale**: Create, train and deploy a ML model in a serverless way for predictions in real time, at scale, using BigQuery ML, Cloud Storage, Cloud Build and Cloud Run. Our solution is full serverless.  
 
