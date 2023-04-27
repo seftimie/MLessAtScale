@@ -37,7 +37,7 @@ Deploy on GCP with Cloud Shell with this workflow/pipeline.
 
   #don't change:
   BQ_DATASET_ID="easyserverless"
-  DOCKERFILE_ML="https://storage.googleapis.com/easyserverless-assets/Dockerfile_ML"
+  DOCKERFILE_ML="https://storage.googleapis.com/mlessatscale/Dockerfile_ML"
   BQ_FORMAT="ML_TF_SAVED_MODEL"
   RUN_NAME="${BQ_MODEL}-run"
   GCP_BUCKET="gs://${GCP_PROJECT_ID}-assets/models/${BQ_MODEL}"
